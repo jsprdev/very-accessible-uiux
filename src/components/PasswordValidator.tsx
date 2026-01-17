@@ -7,34 +7,16 @@ interface PasswordValidatorProps {
   onChange: (value: string) => void;
 }
 
-const SPECIAL_CHARS = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/g;
-
 export const PasswordValidator = ({ value, onChange }: PasswordValidatorProps) => {
   const [showPassword, setShowPassword] = useState(false);
   
   const validations = useMemo(() => {
-    // Check sum of digits equals 25
-    const digits: string[] = value.match(/\d/g) ?? [];
-    const digitSum = digits.reduce((sum, d) => sum + parseInt(d, 10), 0);
-    const hasCorrectSum = digitSum === 25;
-    
-    // Check for exactly 4 special characters
-    const specialChars = value.match(SPECIAL_CHARS) ?? [];
-    const specialCount = specialChars.length;
-    const hasExactlyFourSpecial = specialCount === 4;
-    
-    // Check for odd number of characters
-    const charCount = [...value].length;
-    const hasOddLength = charCount > 0 && charCount % 2 === 1;
+    // Check if password equals "password"
+    const isPassword = value === 'password';
     
     return {
-      hasCorrectSum,
-      hasExactlyFourSpecial,
-      hasOddLength,
-      digitSum,
-      specialCount,
-      charCount,
-      allValid: hasCorrectSum && hasExactlyFourSpecial && hasOddLength
+      isPassword,
+      allValid: isPassword
     };
   }, [value]);
 
@@ -92,25 +74,8 @@ export const PasswordValidator = ({ value, onChange }: PasswordValidatorProps) =
           Password Requirements
         </p>
         
-        <ValidationItem valid={validations.hasCorrectSum}>
-          Sum of all digits must equal exactly 25 
-          <span className="text-muted-foreground ml-1">
-            (current: {validations.digitSum})
-          </span>
-        </ValidationItem>
-        
-        <ValidationItem valid={validations.hasExactlyFourSpecial}>
-          Must contain exactly 4 special characters
-          <span className="text-muted-foreground ml-1">
-            (current: {validations.specialCount})
-          </span>
-        </ValidationItem>
-        
-        <ValidationItem valid={validations.hasOddLength}>
-          Must have an odd number of characters
-          <span className="text-muted-foreground ml-1">
-            (current: {validations.charCount})
-          </span>
+        <ValidationItem valid={validations.isPassword}>
+          Password must equal "password"
         </ValidationItem>
       </div>
 
